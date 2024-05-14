@@ -1,7 +1,8 @@
 import mongoose from "mongoose";
 import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
-userSchema = new mongoose.Schema(
+
+const userSchema = new mongoose.Schema(
   {
     username: {
       type: String,
@@ -48,9 +49,15 @@ userSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
+// we have used pre hook to bcrypt password before saving usermodel in DB. If user do changes in his information and he saved it again so this will excute again which we dont require at all therefore used .isModified("password")
+
+// all the function realted to schema have access of their field using "this" keyword therfore dont use arrow function for cb.
+
+// we also can define our own functions. 
+
 userSchema.pre("save", async function (next) {
   if (!this.isModified("password")) return next();
-  this.password = bcrypt.hash(this.password, 8);
+  this.password = await bcrypt.hash(this.password, 8);
   next();
 });
 

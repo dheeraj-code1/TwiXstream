@@ -1,3 +1,8 @@
+// Create this class for error handling which extends Error class in node.js
+// This standardise error in whole application
+
+
+
 class ApiError extends Error{
   constructor(
     statusCode,
