@@ -1,5 +1,5 @@
-import {v2 as cloudinary} from cloudinary
-import fs from fs
+import {v2 as cloudinary} from 'cloudinary'
+import fs from 'fs'
 
 // used the cloudinary to upload files on cloud.
 // if it is successfully uploads files if error comes removes the localfile from disk.
@@ -20,7 +20,8 @@ const uploadCloudinary = async (localFilePath) =>{
       resource_type: "auto"
     })
 
-    console.log("file uploaded successfully",response.url);
+    // console.log("file uploaded successfully",response.url);
+    fs.unlinkSync(localFilePath)
     return response
 
   } catch (error) {
