@@ -41,9 +41,10 @@ const registerUser = asyncHandler(async (req, res) => {
   })
 
   if (existedUser) {
-    throw new Error(409,"username or password already exist ")
+    throw new ApiError(409,"username or password already exist ")
   }
 
+  console.log(req.files);
   const avatarLocalPath = req.files?.avatar[0]?.path
   // const coverImageLocalPath = req.files?.coverImage[0]?.path || ""
 
@@ -98,9 +99,9 @@ const loginUser = asyncHandler(async(req,res)=>{
   // check the password
   // access and refresh tokens
   // send res
-
+  
   const {username,email,password} = req.body
-
+  console.log(req.body);
   if (
     [username,email].some((user_data)=> user_data?.trim()==="")
   ) {
@@ -115,7 +116,7 @@ const loginUser = asyncHandler(async(req,res)=>{
     throw new ApiError(404,"User does not exits")
   }
 
-  const passwordValid = await user.isPasswordCorrect()
+  const passwordValid = await user.isPasswordCorrect(password)
   if (!passwordValid) {
     throw new ApiError(404,"Invalid user credentials")
   }
@@ -146,7 +147,7 @@ const loginUser = asyncHandler(async(req,res)=>{
 
 const logoutUser = asyncHandler(async(req,res)=>{
 
-  await User.findByIdAndUpdate(
+  const user = await User.findByIdAndUpdate(
     req.user._id,
     {
       $set:{
@@ -161,11 +162,12 @@ const logoutUser = asyncHandler(async(req,res)=>{
     httpOnly:true,
     secure:true
   }
+  console.log("user");
   return res
   .status(200)
   .clearCookie("accessToken",options)
   .clearCookie("refreshToken",options)
-  .json(new ApiResponse(201,{},"Successfully user logout"))
+  .json(new ApiResponse(201,{user},"Successfully user logout"))
 })
 export { registerUser,
   loginUser,

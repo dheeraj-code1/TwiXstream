@@ -9,13 +9,15 @@ app.use(cors({
   credentials:true
 }))
 
+// app.use(bodyparser.json());
+// app.use(bodyparser.urlencoded({ extended: false }));
 app.use(express.json({limit:'16kb'}))  // used configuration for json response in express
 app.use(express.urlencoded({extended:true})) // for handling data from url(params)
 app.use(express.static("public"))  // for storing static files
 app.use(cookieParser())  // cookie-parser
 
 //routes import 
-import userRouter from '../routes/user_routes.js'
+import userRouter from './routes/user_routes.js'
 
 
 // routes declaration
