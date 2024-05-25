@@ -329,7 +329,7 @@ const updateCoverImage = asyncHandler(async(req,res)=>{
   // check if coverImage.url
   // update in DB 
   // return res
-  const coverImageLocalPath = req.file?.avatar
+  const coverImageLocalPath = req.file?.avatar.path
 
   if (!coverImageLocalPath) {
     throw new ApiError(400,"No cover image file found")
@@ -493,5 +493,7 @@ export { registerUser,
   getCurrentUser,
   updateAccountDetails,
   updateAvatar,
-  updateCoverImage
+  updateCoverImage,
+  getCurrentUserProfile,
+  getWatchHistory
  };
