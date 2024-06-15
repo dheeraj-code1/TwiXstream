@@ -11,11 +11,14 @@ const getVideoComments = asyncHandler(async (req, res) => {
   // Then find all comments which have this videoid
 
   const { videoId } = req.params;
+  if (!videoId) {
+    throw new ApiError(400,"No Video Id Provided")
+  }
   const { page = 1, limit = 10 } = req.query;
-  commentsAggregate = await Comment.aggregate([
+  const commentsAggregate = await Comment.aggregate([
     {
       $match: {
-        video: new mongoose.Types.ObjectId(videoId),
+        video: videoId,
       },
     },
   ]);
@@ -29,18 +32,24 @@ const getVideoComments = asyncHandler(async (req, res) => {
     commentsAggregate,
     options
   );
-
+// console.log(allComments);
   return res
     .status(200)
     .json(
-      new ApiResponse(200, allComments, "all comments fetched succcesfully")
+      new ApiResponse(200, {allComments}, "all comments fetched succcesfully")
     );
 });
 
 const addComment = asyncHandler(async (req, res) => {
   // TODO: add a comment to a video
   const { videoId } = req.params;
+  if (!videoId) {
+    throw new ApiError(400,"No Video Id Provided")
+  }
   const { content } = req.body;
+  if (!content) {
+    throw new ApiError(400,"Please provide content")
+  }
   const comment = await Comment.create({
     content,
     video: videoId,
@@ -48,7 +57,7 @@ const addComment = asyncHandler(async (req, res) => {
   });
 
   if (!comment) {
-    throw new ApiError(400, "No comment is avialble");
+    throw new ApiError(500, "comment is not created");
   }
   return res
     .status(200)
@@ -58,22 +67,28 @@ const addComment = asyncHandler(async (req, res) => {
 const updateComment = asyncHandler(async (req, res) => {
   // TODO: update a comment
   const { commentId } = req.params;
+  if (!commentId) {
+    throw new ApiError(400,"No Video Id Provided")
+  }
   const { comment } = req.body;
   if (comment) {
-    await Comment.findByIdAndUpdate(commentId, {
+    var newcomment = await Comment.findByIdAndUpdate(commentId, {
       $set: {
         content: comment,
       },
-    });
+    },{new:true});
   }
-
-  return res.status(200).json(new ApiResponse(200, {}, "comment is updated"));
+  //  console.log(newcomment);
+  return res.status(200).json(new ApiResponse(200, {newcomment}, "comment is updated"));
 });
 
 const deleteComment = asyncHandler(async (req, res) => {
   // TODO: delete a comment
   const { commentId } = req.params;
-  deletedComment = await Comment.findByIdAndDelete(commentId);
+  if (!commentId) {
+    throw new ApiError(400,"No Video Id Provided")
+  }
+  const deleteComment = await Comment.findByIdAndDelete(commentId);
   return res
     .status(200)
     .json(new ApiResponse(200, deleteComment, "Comment is deleted"));
