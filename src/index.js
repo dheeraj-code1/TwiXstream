@@ -19,6 +19,10 @@ connectDB()
     console.log(`Mongodb connection falied:`, err);
   });
 
+
+  
+  
+  module.exports = app;
 /*
 import express from "express";
 
