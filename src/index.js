@@ -22,7 +22,7 @@ connectDB()
 
   
   
-  module.exports = app;
+  // module.exports = app;
 /*
 import express from "express";
 
